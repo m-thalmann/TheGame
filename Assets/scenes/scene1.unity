@@ -1379,9 +1379,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 885dee610eca39c4db85c234c746e23a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 1339216007}
-  obj: {fileID: 123317473}
-  offset: 2
+  lookAt: {fileID: 123317479}
+  camTransform: {fileID: 0}
 --- !u!1001 &1554674575
 Prefab:
   m_ObjectHideFlags: 0

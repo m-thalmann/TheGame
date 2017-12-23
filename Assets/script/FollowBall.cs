@@ -3,16 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FollowBall : MonoBehaviour {
-    public GameObject cam;
-    public GameObject obj;
-    public int offset = 2;
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        cam.transform.position = obj.transform.position + new Vector3(0, offset, -offset);
+    private const float Y_ANGLE_MIN = 0.0f;
+    private const float Y_ANGLE_MAX = 50.0f;
+
+    public Transform lookAt;
+    public Transform camTransform;
+
+    private float distance = 2.5f;
+    private float currentX = 0.0f;
+    private float currentY = 30.0f;
+
+    private void Start()
+    {
+        camTransform = transform;
+    }
+
+    private void Update()
+    {
+        currentX += Input.GetAxis("Mouse X");
+        currentY += Input.GetAxis("Mouse Y");
+
+        currentY = Mathf.Clamp(currentY, Y_ANGLE_MIN, Y_ANGLE_MAX);
+
+        if (Input.GetKey(KeyCode.Escape))
+            Cursor.lockState = CursorLockMode.None;
+        else
+            Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void LateUpdate()
+    {
+        Vector3 dir = new Vector3(0, 0, -distance);
+        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
+        camTransform.position = lookAt.position + rotation * dir;
+        camTransform.LookAt(lookAt.position);
     }
 }
