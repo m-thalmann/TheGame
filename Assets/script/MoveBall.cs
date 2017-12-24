@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MoveBall : MonoBehaviour {
     public float speed;
+    public float multSpeed;
     private float sp;
     public Rigidbody rb;
     private float rad;
@@ -29,6 +30,7 @@ public class MoveBall : MonoBehaviour {
         else
         {
             rb.velocity = new Vector3(mX * sp, rb.velocity.y, mY * sp);
+            //rb.AddForce(new Vector3(mX * sp, 0, mY * sp));
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -40,7 +42,7 @@ public class MoveBall : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             if (Physics.Raycast(rb.position, Vector3.down, rad + 0.1f))
-                sp = speed * 3;
+                sp = speed * multSpeed;
           
         }
 
