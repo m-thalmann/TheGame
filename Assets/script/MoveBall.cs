@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MoveBall : MonoBehaviour {
     public float speed;
@@ -8,16 +9,25 @@ public class MoveBall : MonoBehaviour {
     private float sp;
     public Rigidbody rb;
     private float rad;
-	// Use this for initialization
-	void Start () {
+    public Text text;
+    public Material usedCheck;
+
+    private int checkpoints = 0;
+    private Vector3 checkpoint;
+
+    // Use this for initialization
+    void Start () {
         var sphere = GetComponent<SphereCollider>();
         if (sphere)
             rad = sphere.radius;
         sp = speed;
+
+        saveCheckpoint(new Vector3(1.5f, 5, -11));
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         var mX = Input.GetAxis("Horizontal");
         var mY = Input.GetAxis("Vertical");
 
@@ -25,11 +35,18 @@ public class MoveBall : MonoBehaviour {
 
         if (rb.position.y < -10 || rb.position.y > 50)
         {
-            rb.MovePosition(new Vector3(1.5f, 5, -11));
+            die();
         }
         else
         {
-            rb.velocity = new Vector3(mX * sp, rb.velocity.y, mY * sp);
+            var fwd = Camera.main.transform.forward;
+            fwd.y = 0;
+            fwd.Normalize();
+            var right = Camera.main.transform.right;
+            right.y = 0;
+            right.Normalize();
+
+            rb.velocity = (fwd * mY + right * mX).normalized * sp + rb.velocity.y * Vector3.up;
             //rb.AddForce(new Vector3(mX * sp, 0, mY * sp));
         }
 
@@ -42,8 +59,9 @@ public class MoveBall : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             if (Physics.Raycast(rb.position, Vector3.down, rad + 0.1f))
+            {
                 sp = speed * multSpeed;
-          
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
@@ -51,5 +69,43 @@ public class MoveBall : MonoBehaviour {
             sp = speed;
         }
 
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            saveCheckpoint();
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            die();
+        }
+    }
+    private void die()
+    {
+        rb.MovePosition(checkpoint);
+    }
+
+    private void saveCheckpoint(Vector3 pos)
+    {
+        checkpoint = pos;
+
+        checkpoints++;
+
+        text.text = "Checkpoints: " + checkpoints;
+    }
+
+    private void saveCheckpoint()
+    {
+        saveCheckpoint(rb.position);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Checkpoint")
+        {
+            Vector3 check = collision.gameObject.transform.position;
+            check.y += 4;
+            saveCheckpoint(check);
+            collision.gameObject.tag = "UsedCheckpoint";
+            collision.gameObject.GetComponent<MeshRenderer>().sharedMaterial = usedCheck;
+        }
     }
 }

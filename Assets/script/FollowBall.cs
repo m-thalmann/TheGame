@@ -33,9 +33,14 @@ public class FollowBall : MonoBehaviour {
 
     private void LateUpdate()
     {
-        Vector3 dir = new Vector3(0, 0, -distance);
         Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
-        camTransform.position = lookAt.position + rotation * dir;
+        Vector3 dir = rotation * new Vector3(0, 0, -distance);
+        RaycastHit hitinfo;
+        if (Physics.Raycast(lookAt.position, dir, out hitinfo, distance + 1))
+        {
+            dir = rotation * new Vector3(0, 0, -Mathf.Max(0.1f, hitinfo.distance - 1));
+        }
+        camTransform.position = lookAt.position + dir;
         camTransform.LookAt(lookAt.position);
     }
 }
