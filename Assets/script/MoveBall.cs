@@ -50,15 +50,14 @@ public class MoveBall : MonoBehaviour {
             //rb.AddForce(new Vector3(mX * sp, 0, mY * sp));
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Physics.SphereCast(new Ray(rb.position, Vector3.down), rad - 0.05f, 0.1f))
         {
-            if (Physics.Raycast(rb.position, Vector3.down, rad + 0.1f))
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
                 rb.AddForce(new Vector3(0, 250, 0));
+            }
 
-        }
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            if (Physics.Raycast(rb.position, Vector3.down, rad + 0.1f))
+            if (Input.GetKeyDown(KeyCode.LeftShift))
             {
                 sp = speed * multSpeed;
             }
